@@ -5,11 +5,11 @@ import (
 	"os"
 )
 
-type Level int
-
 type Config struct {
 	Level Level
 }
+
+type Level int
 
 const (
 	DebugLevel Level = iota
@@ -20,21 +20,22 @@ const (
 )
 
 func Setup(c Config) slog.Level {
-	var level slog.Level
-
-	switch c.Level {
-	case Verbose, DebugLevel:
-		level = slog.LevelDebug
-	case WarnLevel:
-		level = slog.LevelWarn
-	case ErrorLevel:
-		level = slog.LevelError
-	default:
-		level = slog.LevelInfo
-	}
-
+	level := logLevel(c.Level)
 	slog.SetLogLoggerLevel(level)
 	return level
+}
+
+func logLevel(level Level) slog.Level {
+	switch level {
+	case Verbose, DebugLevel:
+		return slog.LevelDebug
+	case WarnLevel:
+		return slog.LevelWarn
+	case ErrorLevel:
+		return slog.LevelError
+	default:
+		return slog.LevelInfo
+	}
 }
 
 // Debug, Info, Warn, and Error are direct wrappers for the slog equivalents.
