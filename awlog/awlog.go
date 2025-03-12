@@ -1,6 +1,3 @@
-// awlog is a simple wrapper for log/slog with some
-// sensible behaviours.
-
 package awlog
 
 import (
