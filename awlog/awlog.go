@@ -19,10 +19,9 @@ const (
 	Verbose
 )
 
-func Setup(c Config) slog.Level {
-	level := logLevel(c.Level)
-	slog.SetLogLoggerLevel(level)
-	return level
+func Setup(c Config) error {
+	slog.SetLogLoggerLevel(logLevel(c.Level))
+	return nil
 }
 
 func logLevel(level Level) slog.Level {
