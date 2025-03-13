@@ -1,62 +1,42 @@
-package awlog
+// slog with a few extra methods
+//
+//   - slog.Fatal("msg", "name", "Foo Bar")
+//
+//   - slog.FatalError("msg", err)
+//
+//   - slog.Verbose() // debug
+//
+//   - slog.Quiet()   // warn
+package slog
 
 import (
 	"log/slog"
 	"os"
 )
 
-type Config struct {
-	Level Level
-}
-
-type Level int
-
-const (
-	DebugLevel Level = iota
-	InfoLevel
-	WarnLevel
-	ErrorLevel
-	Verbose
+// Just use slog directly for these four
+var (
+	Debug = slog.Debug
+	Info  = slog.Info
+	Warn  = slog.Warn
+	Error = slog.Error
 )
 
-func Setup(c Config) error {
-	slog.SetLogLoggerLevel(logLevel(c.Level))
-	return nil
+func SetLevel(level slog.Level) {
+	slog.SetLogLoggerLevel(level)
 }
 
-func logLevel(level Level) slog.Level {
-	switch level {
-	case Verbose, DebugLevel:
-		return slog.LevelDebug
-	case WarnLevel:
-		return slog.LevelWarn
-	case ErrorLevel:
-		return slog.LevelError
-	default:
-		return slog.LevelInfo
-	}
+func Verbose() {
+	SetLevel(slog.LevelDebug)
 }
 
-// Debug, Info, Warn, and Error are direct wrappers for the slog equivalents.
-func Debug(msg string, args ...any) {
-	slog.Debug(msg, args...)
+func Quiet() {
+	SetLevel(slog.LevelWarn)
 }
 
-func Info(msg string, args ...any) {
-	slog.Info(msg, args...)
-}
-
-func Warn(msg string, args ...any) {
-	slog.Warn(msg, args...)
-}
-
-func Error(msg string, args ...any) {
-	slog.Error(msg, args...)
-}
-
-// Fatal is a wrapper for slog.Error that also calls os.Exit(1).
+// Fatal wraps slog.Error and then calls os.Exit(1).
 func Fatal(msg string, args ...any) {
-	slog.Error(msg, args...)
+	Error(msg, args...)
 	os.Exit(1)
 }
 
